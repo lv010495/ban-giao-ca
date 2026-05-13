@@ -500,8 +500,15 @@ function tick() {
 }
 tick(); setInterval(tick, 10000);
 
-// ── Init date ──
+// ── Init date & ca ──
 document.getElementById('ngay').value = new Date().toISOString().split('T')[0];
+(function autoSelectCa() {
+  const h = new Date().getHours();
+  const ca = document.getElementById('ca');
+  if (h >= 6 && h < 14)       ca.value = 'Ca sáng (6:00–14:00)';
+  else if (h >= 14 && h < 22) ca.value = 'Ca chiều (14:00–22:00)';
+  else                         ca.value = 'Ca đêm (22:00–6:00)';
+})();
 
 // ── Tab switching ──
 function showPage(id, btn) {
