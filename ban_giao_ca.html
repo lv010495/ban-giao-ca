@@ -332,11 +332,19 @@
     <div class="row2">
       <div class="field">
         <label>NV bàn giao (ca cũ)</label>
-        <input type="text" id="nv-ban" placeholder="Tên nhân viên" oninput="syncSign()">
+        <select id="nv-ban" onchange="syncSign()">
+          <option value="">— Chọn nhân viên —</option>
+          <option value="Chiều">Chiều</option>
+          <option value="Hiếu">Hiếu</option>
+        </select>
       </div>
       <div class="field">
         <label>NV tiếp nhận (ca mới)</label>
-        <input type="text" id="nv-nhan" placeholder="Tên nhân viên" oninput="syncSign()">
+        <select id="nv-nhan" onchange="syncSign()">
+          <option value="">— Chọn nhân viên —</option>
+          <option value="Chiều">Chiều</option>
+          <option value="Hiếu">Hiếu</option>
+        </select>
       </div>
     </div>
   </div>
