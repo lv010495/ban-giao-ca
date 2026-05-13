@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bàn Giao Ca — Nhà Nghỉ</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600&display=swap');
+
+  :root {
+    --bg: #F5F4F0;
+    --surface: #FFFFFF;
+    --border: #E2E0D8;
+    --text: #1A1917;
+    --muted: #6B6860;
+    --accent: #1A6B4A;
+    --accent-light: #E8F5EE;
+    --danger: #C0392B;
+    --warn: #E67E22;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Be Vietnam Pro', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 0 0 80px;
+  }
+
+  .topbar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 20px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .topbar-icon {
+    width: 32px; height: 32px;
+    background: var(--accent);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .topbar-icon svg { width: 18px; height: 18px; stroke: white; fill: none; stroke-width: 2; }
+  .topbar h1 { font-size: 15px; font-weight: 600; }
+  .topbar span { font-size: 12px; color: var(--muted); margin-left: auto; }
+
+  .tabs {
+    display: flex;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
+  .tab-btn {
+    flex: 1; padding: 12px 8px;
+    font-size: 12px; font-weight: 500;
+    color: var(--muted);
+    border: none; background: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+    display: flex; align-items: center; justify-content: center; gap: 5px;
+  }
+  .tab-btn.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+  .tab-btn svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 2; }
+
+  .page { display: none; padding: 16px; max-width: 520px; margin: 0 auto; }
+  .page.active { display: block; }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 12px;
+  }
+  .card-title {
+    font-size: 11px; font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 14px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .card-title svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; }
+
+  .field { margin-bottom: 12px; }
+  .field:last-child { margin-bottom: 0; }
+  .field label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 5px; font-weight: 500; }
+  .field input, .field select, .field textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-family: inherit;
+    background: var(--bg);
+    color: var(--text);
+    transition: border-color 0.15s;
+    -webkit-appearance: none;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: white;
+  }
+  .field textarea { resize: vertical; min-height: 72px; line-height: 1.5; }
+
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+  .money-wrap { position: relative; }
+  .money-wrap input { padding-right: 36px; }
+  .money-suffix {
+    position: absolute; right: 11px; top: 50%;
+    transform: translateY(-50%);
+    font-size: 11px; color: var(--muted); pointer-events: none;
+  }
+
+  .total-row {
+    background: var(--accent-light);
+    border: 1px solid #B8DEC9;
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 4px;
+  }
+  .total-label { font-size: 13px; color: var(--accent); font-weight: 500; }
+  .total-amount { font-size: 20px; font-weight: 600; color: var(--accent); }
+
+  .sign-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .sign-box {
+    border: 1.5px dashed var(--border);
+    border-radius: var(--radius-sm);
+    padding: 14px 10px;
+    text-align: center;
+    min-height: 80px;
+    display: flex; flex-direction: column; justify-content: space-between;
+  }
+  .sign-lbl { font-size: 11px; color: var(--muted); font-weight: 500; }
+  .sign-name { font-size: 14px; font-weight: 600; color: var(--text); margin-top: 8px; min-height: 20px; }
+
+  .btn-primary {
+    width: 100%;
+    padding: 14px;
+    background: var(--accent);
+    color: white;
+    border: none; border-radius: var(--radius);
+    font-size: 15px; font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    transition: opacity 0.15s;
+    margin-top: 4px;
+  }
+  .btn-primary svg { width: 18px; height: 18px; stroke: white; fill: none; stroke-width: 2.5; }
+  .btn-primary:active { opacity: 0.85; }
+  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .btn-secondary {
+    width: 100%;
+    padding: 12px;
+    background: transparent;
+    color: var(--accent);
+    border: 1.5px solid var(--accent);
+    border-radius: var(--radius);
+    font-size: 14px; font-weight: 500;
+    font-family: inherit;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: background 0.15s;
+  }
+  .btn-secondary:hover { background: var(--accent-light); }
+
+  /* Status */
+  .status-bar {
+    display: none;
+    padding: 10px 14px;
+    border-radius: var(--radius-sm);
+    font-size: 13px; font-weight: 500;
+    margin-bottom: 12px;
+    align-items: center; gap: 8px;
+  }
+  .status-bar.show { display: flex; }
+  .status-bar.loading { background: #FFF8E1; color: #E67E22; border: 1px solid #F0D9A0; }
+  .status-bar.success { background: var(--accent-light); color: var(--accent); border: 1px solid #B8DEC9; }
+  .status-bar.error { background: #FDEDEC; color: var(--danger); border: 1px solid #F5C6C2; }
+  .spinner {
+    width: 16px; height: 16px;
+    border: 2px solid currentColor;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    flex-shrink: 0;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* History */
+  .record {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    margin-bottom: 10px;
+  }
+  .record-head { display: flex; justify-content: space-between; margin-bottom: 8px; }
+  .record-who { font-size: 14px; font-weight: 600; }
+  .record-time { font-size: 11px; color: var(--muted); }
+  .record-ca { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+  .record-money { display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); padding: 8px 0; border-top: 1px solid var(--border); }
+  .record-total { display: flex; justify-content: space-between; font-size: 15px; font-weight: 600; color: var(--accent); padding-top: 8px; border-top: 1px solid var(--border); margin-top: 4px; }
+  .record-note { font-size: 12px; color: var(--muted); padding-top: 8px; border-top: 1px solid var(--border); margin-top: 6px; font-style: italic; }
+  .badge {
+    display: inline-flex; align-items: center;
+    padding: 3px 8px;
+    border-radius: 20px;
+    font-size: 11px; font-weight: 500;
+  }
+  .badge-saved { background: var(--accent-light); color: var(--accent); }
+  .badge-local { background: #FFF8E1; color: var(--warn); }
+  .empty-state { text-align: center; padding: 40px 20px; color: var(--muted); }
+  .empty-state svg { width: 40px; height: 40px; stroke: var(--border); fill: none; stroke-width: 1.5; margin-bottom: 12px; }
+
+  /* Setup page */
+  .setup-step {
+    display: flex; gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .setup-step:last-child { border-bottom: none; }
+  .step-num {
+    width: 26px; height: 26px; border-radius: 50%;
+    background: var(--accent); color: white;
+    font-size: 12px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .step-text { font-size: 13px; line-height: 1.6; color: var(--text); }
+  .step-text strong { font-weight: 600; }
+  .step-text code {
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 4px; padding: 1px 6px;
+    font-size: 12px; font-family: monospace;
+  }
+  .url-input-wrap { display: flex; gap: 8px; align-items: stretch; }
+  .url-input-wrap input { flex: 1; }
+  .url-input-wrap button {
+    padding: 0 14px;
+    background: var(--accent); color: white;
+    border: none; border-radius: var(--radius-sm);
+    font-family: inherit; font-size: 13px; font-weight: 500;
+    cursor: pointer; white-space: nowrap;
+  }
+  .saved-ok { font-size: 12px; color: var(--accent); margin-top: 5px; display: none; }
+
+  /* QR page */
+  .qr-wrap { text-align: center; padding: 20px 0; }
+  #qr-img { border: 8px solid white; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+  .qr-hint { font-size: 13px; color: var(--muted); margin-top: 12px; }
+
+  @media print {
+    body * { visibility: hidden; }
+    .qr-wrap, .qr-wrap * { visibility: visible; }
+    .qr-wrap { position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%); }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-icon">
+    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 12h8M12 8v8"/></svg>
+  </div>
+  <h1>Bàn Giao Ca</h1>
+  <span id="clock"></span>
+</div>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="showPage('form',this)">
+    <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+    Bàn giao
+  </button>
+  <button class="tab-btn" onclick="showPage('history',this)">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+    Lịch sử
+  </button>
+  <button class="tab-btn" onclick="showPage('setup',this)">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+    Kết nối
+  </button>
+  <button class="tab-btn" onclick="showPage('qr',this)">
+    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="3" height="3"/></svg>
+    QR
+  </button>
+</div>
+
+<!-- FORM PAGE -->
+<div class="page active" id="page-form">
+  <div id="status-bar" class="status-bar"></div>
+
+  <div class="card">
+    <div class="card-title">
+      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Thông tin ca
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label>Ca làm việc</label>
+        <select id="ca">
+          <option value="Ca sáng (6:00–14:00)">Ca sáng 6:00–14:00</option>
+          <option value="Ca chiều (14:00–22:00)">Ca chiều 14:00–22:00</option>
+          <option value="Ca đêm (22:00–6:00)">Ca đêm 22:00–6:00</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Ngày</label>
+        <input type="date" id="ngay">
+      </div>
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label>NV bàn giao (ca cũ)</label>
+        <input type="text" id="nv-ban" placeholder="Tên nhân viên" oninput="syncSign()">
+      </div>
+      <div class="field">
+        <label>NV tiếp nhận (ca mới)</label>
+        <input type="text" id="nv-nhan" placeholder="Tên nhân viên" oninput="syncSign()">
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">
+      <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      Doanh thu trong ca
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label>Số phòng đã phục vụ</label>
+        <input type="number" id="so-phong" placeholder="0" min="0" oninput="calc()">
+      </div>
+      <div class="field">
+        <label>Đơn giá TB (₫)</label>
+        <div class="money-wrap">
+          <input type="number" id="don-gia" placeholder="0" min="0" oninput="calc()">
+          <span class="money-suffix">₫</span>
+        </div>
+      </div>
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label>Tiền mặt thực nhận</label>
+        <div class="money-wrap">
+          <input type="number" id="tien-mat" placeholder="0" min="0" oninput="calc()">
+          <span class="money-suffix">₫</span>
+        </div>
+      </div>
+      <div class="field">
+        <label>Chuyển khoản</label>
+        <div class="money-wrap">
+          <input type="number" id="chuyen-khoan" placeholder="0" min="0" oninput="calc()">
+          <span class="money-suffix">₫</span>
+        </div>
+      </div>
+    </div>
+    <div class="total-row">
+      <span class="total-label">Tổng thu ca này</span>
+      <span class="total-amount" id="tong-hien">0 ₫</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">
+      <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      Ghi chú & xác nhận
+    </div>
+    <div class="field">
+      <label>Ghi chú sự cố / bàn giao đặc biệt</label>
+      <textarea id="ghi-chu" placeholder="Phòng 3 máy lạnh yếu, khách P201 đã đặt cọc 200k..."></textarea>
+    </div>
+    <div class="sign-grid">
+      <div class="sign-box">
+        <span class="sign-lbl">Bên bàn giao ký</span>
+        <div class="sign-name" id="sign-ban">—</div>
+      </div>
+      <div class="sign-box">
+        <span class="sign-lbl">Bên tiếp nhận ký</span>
+        <div class="sign-name" id="sign-nhan">—</div>
+      </div>
+    </div>
+  </div>
+
+  <button class="btn-primary" id="btn-submit" onclick="submit()">
+    <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+    Xác nhận bàn giao ca
+  </button>
+</div>
+
+<!-- HISTORY PAGE -->
+<div class="page" id="page-history">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+    <span style="font-size:13px; color:var(--muted);" id="history-count">0 bàn giao</span>
+    <button onclick="loadFromSheet()" style="font-size:12px; color:var(--accent); background:none; border:none; cursor:pointer; font-family:inherit; font-weight:500;">↻ Tải từ Sheet</button>
+  </div>
+  <div id="history-list">
+    <div class="empty-state">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      <p>Chưa có bàn giao nào</p>
+    </div>
+  </div>
+</div>
+
+<!-- SETUP PAGE -->
+<div class="page" id="page-setup">
+  <div class="card">
+    <div class="card-title">Kết nối Google Sheets</div>
+
+    <div class="setup-step">
+      <div class="step-num">1</div>
+      <div class="step-text">
+        Mở <strong>Google Sheets</strong>, tạo sheet mới tên <code>BanGiaoCa</code>
+      </div>
+    </div>
+    <div class="setup-step">
+      <div class="step-num">2</div>
+      <div class="step-text">
+        Vào menu <strong>Tiện ích mở rộng → Apps Script</strong>, xóa code cũ và dán code từ file <code>apps_script.gs</code> đã tải về
+      </div>
+    </div>
+    <div class="setup-step">
+      <div class="step-num">3</div>
+      <div class="step-text">
+        Nhấn <strong>Triển khai → Triển khai mới → Ứng dụng web</strong>. Chọn <em>"Mọi người"</em> có thể truy cập. Copy URL triển khai.
+      </div>
+    </div>
+    <div class="setup-step">
+      <div class="step-num">4</div>
+      <div class="step-text">
+        Dán URL vào ô bên dưới và nhấn Lưu
+        <div style="margin-top:8px;" class="url-input-wrap">
+          <input type="text" id="script-url" placeholder="https://script.google.com/macros/s/..." style="font-size:12px;">
+          <button onclick="saveURL()">Lưu</button>
+        </div>
+        <div class="saved-ok" id="url-ok">✓ Đã lưu URL</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Tải Apps Script</div>
+    <p style="font-size:13px; color:var(--muted); margin-bottom:12px;">
+      Nhấn nút bên dưới để tải file code dán vào Google Apps Script.
+    </p>
+    <button class="btn-primary" onclick="downloadScript()">
+      <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Tải file apps_script.gs
+    </button>
+  </div>
+</div>
+
+<!-- QR PAGE -->
+<div class="page" id="page-qr">
+  <div class="card">
+    <div class="card-title">QR code bàn giao ca</div>
+    <div class="qr-wrap">
+      <canvas id="qr-canvas"></canvas>
+      <p class="qr-hint">Nhân viên quét để mở form bàn giao</p>
+      <p style="font-size:11px; color:var(--muted); margin-top:6px;">Lưu file HTML này vào Google Drive, lấy link chia sẻ rồi tạo QR từ link đó để dùng thực tế.</p>
+    </div>
+    <button class="btn-primary" onclick="window.print()">
+      <svg viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+      In QR
+    </button>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+// ── Clock ──
+function tick() {
+  const now = new Date();
+  document.getElementById('clock').textContent =
+    now.toLocaleTimeString('vi-VN', {hour:'2-digit', minute:'2-digit'}) + ' ' +
+    now.toLocaleDateString('vi-VN', {day:'2-digit', month:'2-digit'});
+}
+tick(); setInterval(tick, 10000);
+
+// ── Init date ──
+document.getElementById('ngay').value = new Date().toISOString().split('T')[0];
+
+// ── Tab switching ──
+function showPage(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  btn.classList.add('active');
+  if (id === 'qr') renderQR();
+  if (id === 'history') renderHistory();
+  if (id === 'setup') {
+    const saved = localStorage.getItem('script_url');
+    if (saved) { document.getElementById('script-url').value = saved; document.getElementById('url-ok').style.display = 'block'; }
+  }
+}
+
+// ── Calc ──
+function fmt(n) { return Number(n||0).toLocaleString('vi-VN') + ' ₫'; }
+function calc() {
+  const mat = parseFloat(document.getElementById('tien-mat').value) || 0;
+  const ck = parseFloat(document.getElementById('chuyen-khoan').value) || 0;
+  document.getElementById('tong-hien').textContent = fmt(mat + ck);
+}
+function syncSign() {
+  document.getElementById('sign-ban').textContent = document.getElementById('nv-ban').value || '—';
+  document.getElementById('sign-nhan').textContent = document.getElementById('nv-nhan').value || '—';
+}
+
+// ── Status ──
+function setStatus(type, msg) {
+  const bar = document.getElementById('status-bar');
+  bar.className = 'status-bar show ' + type;
+  bar.innerHTML = type === 'loading'
+    ? '<div class="spinner"></div>' + msg
+    : msg;
+  if (type !== 'loading') setTimeout(() => bar.classList.remove('show'), 5000);
+}
+
+// ── Local storage records ──
+function getRecords() { try { return JSON.parse(localStorage.getItem('bgc_records') || '[]'); } catch(e) { return []; } }
+function saveRecord(r) {
+  const recs = getRecords();
+  recs.unshift(r);
+  localStorage.setItem('bgc_records', JSON.stringify(recs.slice(0, 200)));
+}
+
+// ── Submit ──
+async function submit() {
+  const nvBan = document.getElementById('nv-ban').value.trim();
+  const nvNhan = document.getElementById('nv-nhan').value.trim();
+  if (!nvBan || !nvNhan) { setStatus('error', '⚠ Vui lòng điền tên nhân viên bàn giao và tiếp nhận.'); return; }
+
+  const mat = parseFloat(document.getElementById('tien-mat').value) || 0;
+  const ck = parseFloat(document.getElementById('chuyen-khoan').value) || 0;
+  const now = new Date();
+  const rec = {
+    thoiGian: now.toLocaleString('vi-VN'),
+    ngay: document.getElementById('ngay').value,
+    ca: document.getElementById('ca').value,
+    nvBan, nvNhan,
+    soPhong: document.getElementById('so-phong').value || '0',
+    donGia: document.getElementById('don-gia').value || '0',
+    tienMat: mat,
+    chuyenKhoan: ck,
+    tong: mat + ck,
+    ghiChu: document.getElementById('ghi-chu').value,
+    saved: false
+  };
+
+  const btn = document.getElementById('btn-submit');
+  btn.disabled = true;
+  setStatus('loading', 'Đang ghi vào Google Sheets...');
+
+  const url = localStorage.getItem('script_url');
+  if (url) {
+    try {
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify(rec)
+      });
+      const json = await res.json();
+      if (json.result === 'ok') {
+        rec.saved = true;
+        setStatus('success', '✓ Đã lưu vào Google Sheets thành công!');
+      } else {
+        throw new Error('Sheet error');
+      }
+    } catch(e) {
+      setStatus('error', '⚠ Không thể kết nối Sheet — đã lưu cục bộ trên thiết bị này.');
+    }
+  } else {
+    setStatus('error', '⚠ Chưa cấu hình URL Sheet (tab Kết nối) — đã lưu cục bộ.');
+  }
+
+  saveRecord(rec);
+  resetForm();
+  btn.disabled = false;
+}
+
+function resetForm() {
+  ['nv-ban','nv-nhan','tien-mat','chuyen-khoan','so-phong','don-gia','ghi-chu'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  document.getElementById('tong-hien').textContent = '0 ₫';
+  document.getElementById('sign-ban').textContent = '—';
+  document.getElementById('sign-nhan').textContent = '—';
+}
+
+// ── Render history ──
+function renderHistory() {
+  const recs = getRecords();
+  const el = document.getElementById('history-list');
+  document.getElementById('history-count').textContent = recs.length + ' bàn giao';
+  if (!recs.length) {
+    el.innerHTML = '<div class="empty-state"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><p>Chưa có bàn giao nào</p></div>';
+    return;
+  }
+  el.innerHTML = recs.map(r => `
+    <div class="record">
+      <div class="record-head">
+        <span class="record-who">${r.nvBan} → ${r.nvNhan}</span>
+        <span class="badge ${r.saved ? 'badge-saved' : 'badge-local'}">${r.saved ? '✓ Sheet' : '📱 Cục bộ'}</span>
+      </div>
+      <div class="record-ca">${r.ca} · ${r.ngay} · ${r.soPhong} phòng</div>
+      <div class="record-money">
+        <span>Tiền mặt: ${fmt(r.tienMat)}</span>
+        <span>Chuyển khoản: ${fmt(r.chuyenKhoan)}</span>
+      </div>
+      <div class="record-total"><span>Tổng</span><span>${fmt(r.tong)}</span></div>
+      ${r.ghiChu ? `<div class="record-note">${r.ghiChu}</div>` : ''}
+    </div>
+  `).join('');
+}
+
+// ── Load from sheet ──
+async function loadFromSheet() {
+  const url = localStorage.getItem('script_url');
+  if (!url) { alert('Chưa cấu hình URL Sheet. Vào tab Kết nối để thêm.'); return; }
+  try {
+    const res = await fetch(url + '?action=get');
+    const data = await res.json();
+    if (data.records) {
+      const local = getRecords().filter(r => !r.saved);
+      const all = [...data.records.map(r => ({...r, saved: true})), ...local];
+      localStorage.setItem('bgc_records', JSON.stringify(all.slice(0,200)));
+      renderHistory();
+    }
+  } catch(e) { alert('Không tải được dữ liệu từ Sheet.'); }
+}
+
+// ── Save URL ──
+function saveURL() {
+  const v = document.getElementById('script-url').value.trim();
+  if (!v) { alert('Vui lòng nhập URL Apps Script.'); return; }
+  localStorage.setItem('script_url', v);
+  document.getElementById('url-ok').style.display = 'block';
+}
+
+// ── Download Apps Script ──
+function downloadScript() {
+  const code = `// ============================================================
+// BAN GIAO CA — Google Apps Script
+// Dán toàn bộ code này vào Apps Script của Google Sheet
+// Sau đó: Triển khai → Ứng dụng web → Mọi người có thể truy cập
+// ============================================================
+
+const SHEET_NAME = 'BanGiaoCa';
+
+const HEADERS = [
+  'Thời gian', 'Ngày', 'Ca làm việc',
+  'NV Bàn giao', 'NV Tiếp nhận',
+  'Số phòng', 'Đơn giá TB',
+  'Tiền mặt (₫)', 'Chuyển khoản (₫)', 'Tổng thu (₫)',
+  'Ghi chú'
+];
+
+function doPost(e) {
+  try {
+    const data = JSON.parse(e.postData.contents);
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    let sheet = ss.getSheetByName(SHEET_NAME);
+
+    if (!sheet) {
+      sheet = ss.insertSheet(SHEET_NAME);
+      sheet.appendRow(HEADERS);
+      sheet.getRange(1, 1, 1, HEADERS.length)
+        .setBackground('#1A6B4A')
+        .setFontColor('#FFFFFF')
+        .setFontWeight('bold');
+      sheet.setFrozenRows(1);
+    }
+
+    sheet.appendRow([
+      data.thoiGian || new Date().toLocaleString('vi-VN'),
+      data.ngay || '',
+      data.ca || '',
+      data.nvBan || '',
+      data.nvNhan || '',
+      Number(data.soPhong) || 0,
+      Number(data.donGia) || 0,
+      Number(data.tienMat) || 0,
+      Number(data.chuyenKhoan) || 0,
+      Number(data.tong) || 0,
+      data.ghiChu || ''
+    ]);
+
+    // Auto-resize columns
+    sheet.autoResizeColumns(1, HEADERS.length);
+
+    return ContentService
+      .createTextOutput(JSON.stringify({ result: 'ok' }))
+      .setMimeType(ContentService.MimeType.JSON);
+
+  } catch(err) {
+    return ContentService
+      .createTextOutput(JSON.stringify({ result: 'error', message: err.toString() }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+function doGet(e) {
+  try {
+    const action = e.parameter.action;
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const sheet = ss.getSheetByName(SHEET_NAME);
+
+    if (!sheet || action !== 'get') {
+      return ContentService
+        .createTextOutput(JSON.stringify({ records: [] }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+
+    const rows = sheet.getDataRange().getValues();
+    if (rows.length <= 1) {
+      return ContentService
+        .createTextOutput(JSON.stringify({ records: [] }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+
+    const records = rows.slice(1).reverse().slice(0, 100).map(r => ({
+      thoiGian: r[0], ngay: r[1], ca: r[2],
+      nvBan: r[3], nvNhan: r[4],
+      soPhong: r[5], donGia: r[6],
+      tienMat: r[7], chuyenKhoan: r[8], tong: r[9],
+      ghiChu: r[10], saved: true
+    }));
+
+    return ContentService
+      .createTextOutput(JSON.stringify({ records }))
+      .setMimeType(ContentService.MimeType.JSON);
+
+  } catch(err) {
+    return ContentService
+      .createTextOutput(JSON.stringify({ records: [], error: err.toString() }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}`;
+
+  const blob = new Blob([code], { type: 'text/plain' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'apps_script.gs';
+  a.click();
+}
+
+// ── QR ──
+let qrDone = false;
+function renderQR() {
+  if (qrDone) return;
+  qrDone = true;
+  const canvas = document.getElementById('qr-canvas');
+  try {
+    new QRCode(canvas, {
+      text: window.location.href,
+      width: 200, height: 200,
+      colorDark: '#1A1917', colorLight: '#ffffff',
+      correctLevel: QRCode.CorrectLevel.M
+    });
+  } catch(e) {}
+}
+</script>
+</body>
+</html>
