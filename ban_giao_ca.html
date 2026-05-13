@@ -485,6 +485,12 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
+// ── Default script URL ──
+const DEFAULT_URL = 'https://script.google.com/macros/s/AKfycbyUbEoZDRiYzxRvcBmbuMTpok9DVyNcqtdcYXyfl8F4ge6FHWMoL-5gsvaG_hZb3Fi0Jw/exec';
+if (!localStorage.getItem('script_url')) {
+  localStorage.setItem('script_url', DEFAULT_URL);
+}
+
 // ── Clock ──
 function tick() {
   const now = new Date();
