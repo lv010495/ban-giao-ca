@@ -1,6 +1,6 @@
-# Bàn Giao Ca — Nhà Nghỉ
+# Bàn Giao Ca —
 
-Ứng dụng web bàn giao ca dành cho nhà nghỉ/khách sạn nhỏ. Chạy hoàn toàn trên trình duyệt, lưu dữ liệu vào Google Sheets qua Apps Script.
+Ứng dụng web bàn giao ca . Chạy hoàn toàn trên trình duyệt, lưu dữ liệu vào Google Sheets qua Apps Script.
 
 ## Tính năng
 
